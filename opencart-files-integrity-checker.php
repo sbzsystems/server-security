@@ -17,14 +17,14 @@
  * 
  * 1. INITIAL SETUP (Run once):
  *    cd /home/username/domains/domain.com
- *    php integrity.php init
+ *    php opencart-files-integrity-checker.php init
  *    
  *    This creates an integrity-baseline.json file with hashes of all files.
  * 
  * 2. SCHEDULE MONITORING (Setup via cron):
  *    Add to crontab to run daily checks:
  *    
- *    0 2 * * * /usr/bin/php /home/username/domains/domain.com/integrity.php check >> /home/username/domains/domain.com/integrity.log 2>&1
+ *    0 2 * * * /usr/bin/php /home/username/domains/domain.com/opencart-files-integrity-checker.php check >> /home/username/domains/domain.com/integrity.log 2>&1
  *    
  *    This runs the integrity check every day at 2 AM and logs results.
  * 
@@ -36,7 +36,7 @@
  * 4. UPDATE BASELINE (After legitimate changes):
  *    If legitimate updates are made to files, regenerate baseline:
  *    
- *    php integrity.php init
+ *    php opencart-files-integrity-checker.php init
  * 
  * @version 1.0
  * @license MIT
@@ -202,7 +202,7 @@ function buildBaseline(string $root): array
 function loadBaseline(): array
 {
     if (!is_file(BASELINE_FILE)) {
-        throw new RuntimeException("Missing baseline file: " . BASELINE_FILE . " (run: php bin/integrity.php init)");
+        throw new RuntimeException("Missing baseline file: " . BASELINE_FILE . " (run: php opencart-files-integrity-checker.php init)");
     }
     $json = file_get_contents(BASELINE_FILE);
     if ($json === false) {
@@ -332,11 +332,10 @@ try {
     }
 
     echo "Usage:\n";
-    echo "  php bin/integrity.php init\n";
-    echo "  php bin/integrity.php check\n";
+    echo "  php opencart-files-integrity-checker.php init\n";
+    echo "  php opencart-files-integrity-checker.php check\n";
     exit(1);
 } catch (Throwable $e) {
     fwrite(STDERR, "Error: " . $e->getMessage() . "\n");
     exit(3);
 }
-
