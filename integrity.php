@@ -1,12 +1,46 @@
 <?php
-// SBZ - Simple Baseline Integrity Checker for OpenCart
-// 
-// FIRST RUN TO CREATE BASELINE:
-// cd /home/username/domains/domain.com
-// php integrity.php init
-// 
-// THEN SCHEDULE CHECKS (e.g. via cron) EVERY DAY:
-// /usr/bin/php /home/username/domains/domain.com/integrity.php check >> /home/username/domains/domain.com/integrity.log 2>&1
+/**
+ * SBZ - Simple Baseline Integrity Checker for OpenCart
+ * 
+ * A CLI-based file integrity monitoring tool that detects unauthorized file modifications
+ * in OpenCart installations. Creates and maintains SHA-256 hash baselines of all monitored
+ * files (PHP, Twig, JS, CSS), then compares against them during scheduled integrity checks.
+ * 
+ * FEATURES:
+ * - Automatic OpenCart root detection via config.php
+ * - Excludes cache, logs, and .git directories to reduce false positives
+ * - Stores baseline snapshots in JSON format with timestamps
+ * - Detects added, deleted, and modified files
+ * - Email alerts with detailed change reports on integrity violations
+ * 
+ * USAGE STEPS:
+ * 
+ * 1. INITIAL SETUP (Run once):
+ *    cd /home/username/domains/domain.com
+ *    php integrity.php init
+ *    
+ *    This creates an integrity-baseline.json file with hashes of all files.
+ * 
+ * 2. SCHEDULE MONITORING (Setup via cron):
+ *    Add to crontab to run daily checks:
+ *    
+ *    0 2 * * * /usr/bin/php /home/username/domains/domain.com/integrity.php check >> /home/username/domains/domain.com/integrity.log 2>&1
+ *    
+ *    This runs the integrity check every day at 2 AM and logs results.
+ * 
+ * 3. REVIEW ALERTS:
+ *    - Check integrity.log for modification reports
+ *    - Review email alerts (sent to store email from config_email setting)
+ *    - Investigate any unexpected file changes immediately
+ * 
+ * 4. UPDATE BASELINE (After legitimate changes):
+ *    If legitimate updates are made to files, regenerate baseline:
+ *    
+ *    php integrity.php init
+ * 
+ * @version 1.0
+ * @license MIT
+ */
 
 declare(strict_types=1);
 
@@ -305,3 +339,4 @@ try {
     fwrite(STDERR, "Error: " . $e->getMessage() . "\n");
     exit(3);
 }
+
